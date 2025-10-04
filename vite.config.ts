@@ -1,10 +1,11 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from -tagger";
+import { componentTagger } from "-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: "/raynix-website/",   // 👈 this is the important addition
   server: {
     host: "::",
     port: 8080,
