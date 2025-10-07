@@ -1,43 +1,37 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { createClient } from '@supabase/supabase-js'
 
-interface SignInModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-const SignInModal = ({ isOpen, onClose }: SignInModalProps) => {
-  const navigate = useNavigate();
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-  const handleSignIn = () => {
-    onClose();
-    navigate('/auth');
-  };
+export default function SignInModal({ onClose }) {
+  async function signInWithGoogle() {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'https://raynix.netlify.app/auth' // your site URL + /auth
+      }
+    })
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-card/95 backdrop-blur-xl border-border">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Sign In to Raynix
-          </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            Continue with your Google account to access all features
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col gap-4 py-4">
-          <Button
-            onClick={handleSignIn}
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow-primary"
-            size="lg"
-          >
-            Sign In / Sign Up
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-export default SignInModal;
+    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
+      <h2 className="text-2xl font-bold mb-6">Sign in to Raynix</h2>
+      <button
+        onClick={signInWithGoogle}
+        className="w-64 py-3 rounded-md bg-white text-black font-semibold flex items-center justify-center gap-2"
+      >
+        <img
+          src="https://www.svgrepo.com/show/355037/google.svg"
+          alt="Google"
+          className="w-5 h-5"
+        />
+        Continue with Google
+      </button>
+      <button onClick={onClose} className="mt-3 text-xs text-gray-300">
+        Continue as guest
+      </button>
+    </div>
+  )
+}
